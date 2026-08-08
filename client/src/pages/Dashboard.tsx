@@ -1,4 +1,10 @@
-import { useContext, useMemo, useState } from "react";
+import {
+  useContext,
+  useEffect,
+  useMemo,
+  useRef,
+  useState,
+} from "react";
 
 import DashboardCard from "../components/dashboard/DashboardCard";
 import PromptCard from "../components/prompt/PromptCard";
@@ -48,7 +54,10 @@ function Dashboard() {
   // Prompt currently being deleted
   const [deletingPrompt, setDeletingPrompt] =
     useState<Prompt | null>(null);
+ 
 
+const searchInputRef =
+  useRef<HTMLInputElement | null>(null);
   // -------------------------
   // SEARCH / FILTER / SORT
   // -------------------------
@@ -80,6 +89,34 @@ function Dashboard() {
 
     return [...new Set(tags)].sort();
   }, [prompts]);
+
+
+  useEffect(() => {
+  const handleKeyDown = (
+    event: KeyboardEvent
+  ) => {
+    if (
+      (event.ctrlKey || event.metaKey) &&
+      event.key.toLowerCase() === "k"
+    ) {
+      event.preventDefault();
+
+      searchInputRef.current?.focus();
+    }
+  };
+
+  window.addEventListener(
+    "keydown",
+    handleKeyDown
+  );
+
+  return () => {
+    window.removeEventListener(
+      "keydown",
+      handleKeyDown
+    );
+  };
+}, []);
 
   // -------------------------
   // SEARCH + FILTER + SORT
@@ -143,33 +180,42 @@ function Dashboard() {
     // SORT
     // -------------------------
 
-    result.sort((a, b) => {
-      // Newest created first
-      if (sortBy === "newest") {
-        return (
-          new Date(b.createdAt).getTime() -
-          new Date(a.createdAt).getTime()
-        );
-      }
+   result.sort((a, b) => {
+  // Pinned prompts always come first
+  if (a.isPinned && !b.isPinned) {
+    return -1;
+  }
 
-      // Oldest created first
-      if (sortBy === "oldest") {
-        return (
-          new Date(a.createdAt).getTime() -
-          new Date(b.createdAt).getTime()
-        );
-      }
+  if (!a.isPinned && b.isPinned) {
+    return 1;
+  }
 
-      // Recently updated first
-      if (sortBy === "updated") {
-        return (
-          new Date(b.updatedAt).getTime() -
-          new Date(a.updatedAt).getTime()
-        );
-      }
+  // Newest created
+  if (sortBy === "newest") {
+    return (
+      new Date(b.createdAt).getTime() -
+      new Date(a.createdAt).getTime()
+    );
+  }
 
-      return 0;
-    });
+  // Oldest created
+  if (sortBy === "oldest") {
+    return (
+      new Date(a.createdAt).getTime() -
+      new Date(b.createdAt).getTime()
+    );
+  }
+
+  // Recently updated
+  if (sortBy === "updated") {
+    return (
+      new Date(b.updatedAt).getTime() -
+      new Date(a.updatedAt).getTime()
+    );
+  }
+
+  return 0;
+});
 
     return result;
   }, [
@@ -273,24 +319,23 @@ function Dashboard() {
         ========================== */}
 
         <div className="mb-4">
-          <input
-            type="text"
-            value={searchQuery}
-            onChange={(event) =>
-              setSearchQuery(
-                event.target.value
-              )
-            }
-            placeholder="🔍 Search title, content or tags..."
-            className="w-full rounded-lg border border-gray-300 bg-white px-4 py-3 text-sm outline-none focus:border-gray-900"
-          />
+         <input
+  ref={searchInputRef}
+  type="text"
+  value={searchQuery}
+  onChange={(event) =>
+    setSearchQuery(event.target.value)
+  }
+  placeholder="🔍 Search title, content or tags..."
+  className="w-full rounded-lg border border-gray-300 bg-white px-4 py-3 text-sm"
+/>
         </div>
 
         {/* =========================
             FILTERS
         ========================== */}
 
-        <div className="mb-6 grid gap-3 sm:grid-cols-3">
+       <div className="mb-6 flex flex-wrap gap-3">
 
           {/* Category Filter */}
           <select
@@ -364,6 +409,21 @@ function Dashboard() {
               Recently Updated
             </option>
           </select>
+          {/* Clear Filters */}
+  <button
+    type="button"
+    onClick={() => {
+      setSearchQuery("");
+      setSelectedCategory("All");
+      setSelectedTag("All");
+      setSortBy("newest");
+    }}
+    className="rounded-lg border border-gray-300 bg-white px-4 py-3 text-sm font-medium text-gray-700 hover:bg-gray-50"
+  >
+    Reset Filters
+  </button> 
+  
+
         </div>
 
         {/* =========================

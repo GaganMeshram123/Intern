@@ -1,20 +1,36 @@
-function Navbar() {
+interface NavbarProps {
+  darkMode: boolean;
+  onToggleDarkMode: () => void;
+}
+
+function Navbar({
+  darkMode,
+  onToggleDarkMode,
+}: NavbarProps) {
   return (
-    <header className="h-16 border-b bg-white px-6 flex items-center justify-between">
-      <h1 className="text-xl font-semibold text-gray-900">
-        AI Prompt Library
-      </h1>
+    <nav className="border-b border-gray-200 bg-white dark:border-gray-800 dark:bg-gray-900">
+      <div className="flex h-16 items-center justify-between px-6">
+        {/* Logo */}
+        <div>
+          <h1 className="text-lg font-bold text-gray-900 dark:text-white">
+            AI Prompt Library
+          </h1>
 
-      <div className="flex items-center gap-4">
-        <button className="text-gray-600 hover:text-gray-900">
-          🌙
-        </button>
-
-        <div className="h-9 w-9 rounded-full bg-gray-200 flex items-center justify-center">
-          U
+          <p className="text-xs text-gray-500 dark:text-gray-400">
+            Manage your prompts
+          </p>
         </div>
+
+        {/* Theme Button */}
+        <button
+          type="button"
+          onClick={onToggleDarkMode}
+          className="rounded-lg border border-gray-300 bg-white px-4 py-2 text-sm font-medium text-gray-700 transition hover:bg-gray-100 dark:border-gray-700 dark:bg-gray-900 dark:text-gray-200 dark:hover:bg-gray-800"
+        >
+          {darkMode ? "☀️ Light" : "🌙 Dark"}
+        </button>
       </div>
-    </header>
+    </nav>
   );
 }
 
