@@ -7,6 +7,7 @@ import PromptForm from "../components/prompt/PromptForm";
 
 import PromptContext from "../context/PromptContext";
 import type { Prompt } from "../types/prompt";
+import DeletePromptDialog from "../components/prompt/DeletePromptDialog";
 
 function Dashboard() {
   // Get prompts and functions from Context
@@ -23,6 +24,7 @@ function Dashboard() {
     prompts,
     addPrompt,
     updatePrompt,
+    deletePrompt,
   } = context;
 
   // Controls Add Prompt modal
@@ -32,6 +34,10 @@ function Dashboard() {
   // Stores the prompt currently being edited
   const [editingPrompt, setEditingPrompt] =
     useState<Prompt | null>(null);
+
+  const [deletingPrompt, setDeletingPrompt] =
+  useState<Prompt | null>(null);
+
 
   return (
     <div>
@@ -95,15 +101,18 @@ function Dashboard() {
         </h3>
 
         <div className="grid gap-4">
-          {prompts.map((prompt) => (
-            <PromptCard
-              key={prompt.id}
-              prompt={prompt}
-              onEdit={(prompt) => {
-                setEditingPrompt(prompt);
-              }}
-            />
-          ))}
+         {prompts.map((prompt) => (
+  <PromptCard
+    key={prompt.id}
+    prompt={prompt}
+    onEdit={(prompt) => {
+      setEditingPrompt(prompt);
+    }}
+    onDelete={(prompt) => {
+      setDeletingPrompt(prompt);
+    }}
+  />
+))}
         </div>
       </div>
 
@@ -139,6 +148,17 @@ function Dashboard() {
           />
         )}
       </PromptModal>
+    <DeletePromptDialog
+  isOpen={deletingPrompt !== null}
+  promptTitle={deletingPrompt?.title ?? ""}
+  onCancel={() => setDeletingPrompt(null)}
+  onConfirm={() => {
+    if (deletingPrompt) {
+      deletePrompt(deletingPrompt.id);
+      setDeletingPrompt(null);
+    }
+  }}
+/>
     </div>
   );
 }

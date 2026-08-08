@@ -3,11 +3,13 @@ import type { Prompt } from "../../types/prompt";
 interface PromptCardProps {
   prompt: Prompt;
   onEdit: (prompt: Prompt) => void;
+  onDelete: (prompt: Prompt) => void;
 }
 
 function PromptCard({
   prompt,
   onEdit,
+  onDelete,
 }: PromptCardProps) {
   return (
     <div className="rounded-xl border bg-white p-5 shadow-sm transition hover:shadow-md">
@@ -61,15 +63,23 @@ function PromptCard({
       </div>
 
       {/* Actions */}
-      <div className="mt-4 flex justify-end">
-        <button
-          type="button"
-          onClick={() => onEdit(prompt)}
-          className="rounded-lg border border-gray-300 px-3 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50"
-        >
-          ✏️ Edit
-        </button>
-      </div>
+      <div className="mt-4 flex justify-end gap-2">
+  <button
+    type="button"
+    onClick={() => onEdit(prompt)}
+    className="rounded-lg border border-gray-300 px-3 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50"
+  >
+    ✏️ Edit
+  </button>
+
+  <button
+    type="button"
+    onClick={() => onDelete(prompt)}
+    className="rounded-lg border border-red-200 px-3 py-2 text-sm font-medium text-red-600 hover:bg-red-50"
+  >
+    🗑 Delete
+  </button>
+</div>
     </div>
   );
 }

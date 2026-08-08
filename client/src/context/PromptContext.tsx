@@ -5,6 +5,7 @@ interface PromptContextType {
   prompts: Prompt[];
   addPrompt: (prompt: Prompt) => void;
   updatePrompt: (updatedPrompt: Prompt) => void;
+  deletePrompt: (id: string) => void;
 }
 
 interface PromptProviderProps {
@@ -77,6 +78,13 @@ const updatePrompt = (updatedPrompt: Prompt) => {
     )
   );
 };
+const deletePrompt = (id: string) => {
+  setPrompts((currentPrompts) =>
+    currentPrompts.filter(
+      (prompt) => prompt.id !== id
+    )
+  );
+};
 
   return (
     <PromptContext.Provider
@@ -84,6 +92,7 @@ const updatePrompt = (updatedPrompt: Prompt) => {
         prompts,
   addPrompt,
   updatePrompt,
+  deletePrompt,
       }}
     >
       {children}
