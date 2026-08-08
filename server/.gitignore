@@ -1,0 +1,63 @@
+# ==============================================================================
+# 1. DEPENDENCIES & PACKAGES (Never commit node_modules)
+# ==============================================================================
+node_modules/
+**/node_modules/
+jspm_packages/
+web_modules/ 
+ 
+# ==============================================================================
+# 2. SECURITY & ENVIRONMENT VARIABLES (Critical for MongoDB keys, JWT tokens)
+# ==============================================================================
+.env
+.env.local
+.env.development.local
+.env.test.local
+.env.production.local
+*.env
+
+# ==============================================================================
+# 3. PRODUCTION & BUILD OUTPUTS (React / Vite production assets)
+# ==============================================================================
+# React build folder
+build/
+dist/
+
+# Next.js build folder (if using Next instead of Vite/CRA)
+.next/
+out/
+
+# Server-side typescript build output
+dist-server/
+
+# ==============================================================================
+# 4. SYSTEM & OS FILES (Local cache logs and desktop metadata)
+# ==============================================================================
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+
+# ==============================================================================
+# 5. LOGS & DIAGNOSTICS
+# ==============================================================================
+logs
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+
+# ==============================================================================
+# 6. IDEs & TEXT EDITORS
+# ==============================================================================
+.vscode/
+.idea/
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+*.sw?
