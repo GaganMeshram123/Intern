@@ -8,7 +8,8 @@ import PromptForm from "../components/prompt/PromptForm";
 import PromptContext from "../context/PromptContext";
 import type { Prompt } from "../types/prompt";
 import DeletePromptDialog from "../components/prompt/DeletePromptDialog";
-
+import { CATEGORIES } from "../constants/categories";
+ 
 function Dashboard() {
   // Get prompts and functions from Context
   const context = useContext(PromptContext);
@@ -20,13 +21,15 @@ function Dashboard() {
     );
   }
 
-  const {
-    prompts,
-    addPrompt,
-    updatePrompt,
-    deletePrompt,
-    duplicatePrompt,
-  } = context;
+const {
+  prompts,
+  addPrompt,
+  updatePrompt,
+  deletePrompt,
+  duplicatePrompt,
+  toggleFavorite,
+  togglePin,
+} = context;
 
   // Controls Add Prompt modal
   const [isAddModalOpen, setIsAddModalOpen] =
@@ -39,6 +42,10 @@ function Dashboard() {
   const [deletingPrompt, setDeletingPrompt] =
   useState<Prompt | null>(null);
 
+  const [searchQuery, setSearchQuery] = useState("");
+const [selectedCategory, setSelectedCategory] = useState("All");
+const [selectedTag, setSelectedTag] = useState("All");
+const [sortBy, setSortBy] = useState("newest");
 
   return (
     <div>
@@ -114,6 +121,12 @@ function Dashboard() {
     }}
     onDuplicate={(prompt) => {
     duplicatePrompt(prompt);
+  }}
+   onFavorite={(prompt) => {
+    toggleFavorite(prompt.id);
+  }}
+  onPin={(prompt) => {
+    togglePin(prompt.id);
   }}
   />
 ))}

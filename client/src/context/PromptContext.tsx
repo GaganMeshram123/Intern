@@ -7,6 +7,8 @@ interface PromptContextType {
   updatePrompt: (updatedPrompt: Prompt) => void;
   deletePrompt: (id: string) => void;
   duplicatePrompt: (prompt: Prompt) => void;
+  toggleFavorite: (id: string) => void;
+  togglePin: (id: string) => void;
 }
 
 interface PromptProviderProps {
@@ -104,6 +106,33 @@ const duplicatePrompt = (prompt: Prompt) => {
   ]);
 };
 
+const toggleFavorite = (id: string) => {
+  setPrompts((currentPrompts) =>
+    currentPrompts.map((prompt) =>
+      prompt.id === id
+        ? {
+            ...prompt,
+            isFavorite: !prompt.isFavorite,
+            updatedAt: new Date().toISOString(),
+          }
+        : prompt
+    )
+  );
+};
+
+const togglePin = (id: string) => {
+  setPrompts((currentPrompts) =>
+    currentPrompts.map((prompt) =>
+      prompt.id === id
+        ? {
+            ...prompt,
+            isPinned: !prompt.isPinned,
+            updatedAt: new Date().toISOString(),
+          }
+        : prompt
+    )
+  );
+};
 
   return (
     <PromptContext.Provider
@@ -113,6 +142,8 @@ const duplicatePrompt = (prompt: Prompt) => {
     updatePrompt,
     deletePrompt,
     duplicatePrompt,
+    toggleFavorite,
+    togglePin,
   }}
 >
       {children}

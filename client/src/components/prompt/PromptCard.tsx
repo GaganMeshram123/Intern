@@ -5,6 +5,8 @@ interface PromptCardProps {
   onEdit: (prompt: Prompt) => void;
   onDelete: (prompt: Prompt) => void;
   onDuplicate: (prompt: Prompt) => void;
+  onFavorite: (prompt: Prompt) => void;
+  onPin: (prompt: Prompt) => void;
 }
 
 function PromptCard({
@@ -12,6 +14,8 @@ function PromptCard({
   onEdit,
   onDelete,
   onDuplicate,
+  onFavorite,
+  onPin,
 }: PromptCardProps) {
   return (
     <div className="rounded-xl border bg-white p-5 shadow-sm transition hover:shadow-md">
@@ -65,7 +69,31 @@ function PromptCard({
       </div>
 
       {/* Actions */}
-      <div className="mt-4 flex justify-end gap-2">
+    {/* Actions */}
+<div className="mt-4 flex flex-wrap justify-end gap-2">
+  {/* Favorite */}
+  <button
+    type="button"
+    onClick={() => onFavorite(prompt)}
+    className="rounded-lg border border-yellow-200 px-3 py-2 text-sm font-medium text-yellow-700 hover:bg-yellow-50"
+  >
+    {prompt.isFavorite
+      ? "⭐ Unfavorite"
+      : "☆ Favorite"}
+  </button>
+
+  {/* Pin */}
+  <button
+    type="button"
+    onClick={() => onPin(prompt)}
+    className="rounded-lg border border-purple-200 px-3 py-2 text-sm font-medium text-purple-700 hover:bg-purple-50"
+  >
+    {prompt.isPinned
+      ? "📌 Unpin"
+      : "📍 Pin"}
+  </button>
+
+  {/* Edit */}
   <button
     type="button"
     onClick={() => onEdit(prompt)}
@@ -74,14 +102,28 @@ function PromptCard({
     ✏️ Edit
   </button>
 
- <button
+  {/* Duplicate */}
+  <button
     type="button"
     onClick={() => onDuplicate(prompt)}
     className="rounded-lg border border-blue-200 px-3 py-2 text-sm font-medium text-blue-600 hover:bg-blue-50"
   >
     📋 Duplicate
   </button>
-  
+
+  {/* Copy */}
+  <button
+    type="button"
+    onClick={() => {
+      navigator.clipboard.writeText(prompt.content);
+      alert("Prompt copied to clipboard!");
+    }}
+    className="rounded-lg border border-green-200 px-3 py-2 text-sm font-medium text-green-600 hover:bg-green-50"
+  >
+    📋 Copy
+  </button>
+
+  {/* Delete */}
   <button
     type="button"
     onClick={() => onDelete(prompt)}
@@ -89,9 +131,9 @@ function PromptCard({
   >
     🗑 Delete
   </button>
-</div>
-    </div>
-  );
+ </div>
+  </div>
+   );
 }
 
 export default PromptCard;
