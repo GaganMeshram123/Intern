@@ -4,12 +4,14 @@ interface PromptCardProps {
   prompt: Prompt;
   onEdit: (prompt: Prompt) => void;
   onDelete: (prompt: Prompt) => void;
+  onDuplicate: (prompt: Prompt) => void;
 }
 
 function PromptCard({
   prompt,
   onEdit,
   onDelete,
+  onDuplicate,
 }: PromptCardProps) {
   return (
     <div className="rounded-xl border bg-white p-5 shadow-sm transition hover:shadow-md">
@@ -72,6 +74,14 @@ function PromptCard({
     ✏️ Edit
   </button>
 
+ <button
+    type="button"
+    onClick={() => onDuplicate(prompt)}
+    className="rounded-lg border border-blue-200 px-3 py-2 text-sm font-medium text-blue-600 hover:bg-blue-50"
+  >
+    📋 Duplicate
+  </button>
+  
   <button
     type="button"
     onClick={() => onDelete(prompt)}

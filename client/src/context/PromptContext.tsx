@@ -6,6 +6,7 @@ interface PromptContextType {
   addPrompt: (prompt: Prompt) => void;
   updatePrompt: (updatedPrompt: Prompt) => void;
   deletePrompt: (id: string) => void;
+  duplicatePrompt: (prompt: Prompt) => void;
 }
 
 interface PromptProviderProps {
@@ -86,15 +87,34 @@ const deletePrompt = (id: string) => {
   );
 };
 
+const duplicatePrompt = (prompt: Prompt) => {
+  const now = new Date().toISOString();
+
+  const duplicatedPrompt: Prompt = {
+    ...prompt,
+    id: crypto.randomUUID(),
+    title: `${prompt.title} (Copy)`,
+    createdAt: now,
+    updatedAt: now,
+  };
+
+  setPrompts((currentPrompts) => [
+    ...currentPrompts,
+    duplicatedPrompt,
+  ]);
+};
+
+
   return (
     <PromptContext.Provider
-      value={{
-        prompts,
-  addPrompt,
-  updatePrompt,
-  deletePrompt,
-      }}
-    >
+  value={{
+    prompts,
+    addPrompt,
+    updatePrompt,
+    deletePrompt,
+    duplicatePrompt,
+  }}
+>
       {children}
     </PromptContext.Provider>
   );

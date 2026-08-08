@@ -25,6 +25,7 @@ function Dashboard() {
     addPrompt,
     updatePrompt,
     deletePrompt,
+    duplicatePrompt,
   } = context;
 
   // Controls Add Prompt modal
@@ -111,6 +112,9 @@ function Dashboard() {
     onDelete={(prompt) => {
       setDeletingPrompt(prompt);
     }}
+    onDuplicate={(prompt) => {
+    duplicatePrompt(prompt);
+  }}
   />
 ))}
         </div>
