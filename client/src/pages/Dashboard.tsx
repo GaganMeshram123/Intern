@@ -9,20 +9,29 @@ import PromptContext from "../context/PromptContext";
 import type { Prompt } from "../types/prompt";
 
 function Dashboard() {
-  // Get data and functions from Prompt Context
+  // Get prompts and functions from Context
   const context = useContext(PromptContext);
 
-  // Make sure Dashboard is inside PromptProvider
+  // Dashboard must be inside PromptProvider
   if (!context) {
     throw new Error(
       "Dashboard must be used inside PromptProvider"
     );
   }
 
-  const { prompts, addPrompt } = context;
+  const {
+    prompts,
+    addPrompt,
+    updatePrompt,
+  } = context;
 
-  // Controls whether the Add Prompt modal is open
-  const [isAddModalOpen, setIsAddModalOpen] = useState(false);
+  // Controls Add Prompt modal
+  const [isAddModalOpen, setIsAddModalOpen] =
+    useState(false);
+
+  // Stores the prompt currently being edited
+  const [editingPrompt, setEditingPrompt] =
+    useState<Prompt | null>(null);
 
   return (
     <div>
@@ -40,6 +49,7 @@ function Dashboard() {
 
         {/* Add Prompt Button */}
         <button
+          type="button"
           onClick={() => setIsAddModalOpen(true)}
           className="rounded-lg bg-gray-900 px-4 py-2.5 text-sm font-medium text-white hover:bg-gray-800"
         >
@@ -57,7 +67,11 @@ function Dashboard() {
 
         <DashboardCard
           title="Favorite Prompts"
-          value={prompts.filter((prompt) => prompt.isFavorite).length}
+          value={
+            prompts.filter(
+              (prompt) => prompt.isFavorite
+            ).length
+          }
           icon="⭐"
         />
 
@@ -85,6 +99,9 @@ function Dashboard() {
             <PromptCard
               key={prompt.id}
               prompt={prompt}
+              onEdit={(prompt) => {
+                setEditingPrompt(prompt);
+              }}
             />
           ))}
         </div>
@@ -103,6 +120,24 @@ function Dashboard() {
             setIsAddModalOpen(false);
           }}
         />
+      </PromptModal>
+
+      {/* Edit Prompt Modal */}
+      <PromptModal
+        isOpen={editingPrompt !== null}
+        title="Edit Prompt"
+        onClose={() => setEditingPrompt(null)}
+      >
+        {editingPrompt && (
+          <PromptForm
+            initialPrompt={editingPrompt}
+            onCancel={() => setEditingPrompt(null)}
+            onSubmit={(updatedPrompt) => {
+              updatePrompt(updatedPrompt);
+              setEditingPrompt(null);
+            }}
+          />
+        )}
       </PromptModal>
     </div>
   );

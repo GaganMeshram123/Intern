@@ -2,9 +2,13 @@ import type { Prompt } from "../../types/prompt";
 
 interface PromptCardProps {
   prompt: Prompt;
+  onEdit: (prompt: Prompt) => void;
 }
 
-function PromptCard({ prompt }: PromptCardProps) {
+function PromptCard({
+  prompt,
+  onEdit,
+}: PromptCardProps) {
   return (
     <div className="rounded-xl border bg-white p-5 shadow-sm transition hover:shadow-md">
       
@@ -20,6 +24,7 @@ function PromptCard({ prompt }: PromptCardProps) {
           </p>
         </div>
 
+        {/* Favorite and Pin */}
         <div className="flex gap-2 text-lg">
           {prompt.isFavorite && <span>⭐</span>}
           {prompt.isPinned && <span>📌</span>}
@@ -51,7 +56,19 @@ function PromptCard({ prompt }: PromptCardProps) {
 
       {/* Date */}
       <div className="mt-4 text-xs text-gray-400">
-        Created: {new Date(prompt.createdAt).toLocaleDateString()}
+        Created:{" "}
+        {new Date(prompt.createdAt).toLocaleDateString()}
+      </div>
+
+      {/* Actions */}
+      <div className="mt-4 flex justify-end">
+        <button
+          type="button"
+          onClick={() => onEdit(prompt)}
+          className="rounded-lg border border-gray-300 px-3 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50"
+        >
+          ✏️ Edit
+        </button>
       </div>
     </div>
   );

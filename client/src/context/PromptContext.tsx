@@ -4,6 +4,7 @@ import type { Prompt } from "../types/prompt";
 interface PromptContextType {
   prompts: Prompt[];
   addPrompt: (prompt: Prompt) => void;
+  updatePrompt: (updatedPrompt: Prompt) => void;
 }
 
 interface PromptProviderProps {
@@ -67,11 +68,22 @@ export function PromptProvider({
     ]);
   };
 
+const updatePrompt = (updatedPrompt: Prompt) => {
+  setPrompts((currentPrompts) =>
+    currentPrompts.map((prompt) =>
+      prompt.id === updatedPrompt.id
+        ? updatedPrompt
+        : prompt
+    )
+  );
+};
+
   return (
     <PromptContext.Provider
       value={{
         prompts,
-        addPrompt,
+  addPrompt,
+  updatePrompt,
       }}
     >
       {children}

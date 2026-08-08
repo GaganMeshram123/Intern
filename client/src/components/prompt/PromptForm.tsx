@@ -1,23 +1,54 @@
-import { useState, type FormEvent } from "react";
+import {
+  useEffect,
+  useState,
+  type FormEvent,
+} from "react";
+
 import { CATEGORIES } from "../../constants/categories";
 import type { Prompt } from "../../types/prompt";
 
 interface PromptFormProps {
   onSubmit: (prompt: Prompt) => void;
   onCancel: () => void;
+  initialPrompt?: Prompt;
 }
 
 function PromptForm({
   onSubmit,
   onCancel,
+  initialPrompt,
 }: PromptFormProps) {
-  const [title, setTitle] = useState("");
-  const [content, setContent] = useState("");
-  const [description, setDescription] = useState("");
-  const [category, setCategory] = useState("");
-  const [tags, setTags] = useState("");
+  const [title, setTitle] = useState(
+    initialPrompt?.title ?? ""
+  );
 
-  const handleSubmit = (event: FormEvent<HTMLFormElement>) => {
+  const [content, setContent] = useState(
+    initialPrompt?.content ?? ""
+  );
+
+  const [description, setDescription] = useState(
+    initialPrompt?.description ?? ""
+  );
+
+  const [category, setCategory] = useState(
+    initialPrompt?.category ?? ""
+  );
+
+  const [tags, setTags] = useState(
+    initialPrompt?.tags.join(", ") ?? ""
+  );
+
+  useEffect(() => {
+    setTitle(initialPrompt?.title ?? "");
+    setContent(initialPrompt?.content ?? "");
+    setDescription(initialPrompt?.description ?? "");
+    setCategory(initialPrompt?.category ?? "");
+    setTags(initialPrompt?.tags.join(", ") ?? "");
+  }, [initialPrompt]);
+
+  const handleSubmit = (
+    event: FormEvent<HTMLFormElement>
+  ) => {
     event.preventDefault();
 
     if (!title.trim()) {
@@ -37,23 +68,35 @@ function PromptForm({
 
     const now = new Date().toISOString();
 
-    const newPrompt: Prompt = {
-      id: crypto.randomUUID(),
+    const prompt: Prompt = {
+      id: initialPrompt?.id ?? crypto.randomUUID(),
+
       title: title.trim(),
+
       content: content.trim(),
+
       description: description.trim(),
+
       category,
+
       tags: tags
         .split(",")
         .map((tag) => tag.trim())
         .filter((tag) => tag.length > 0),
-      createdAt: now,
+
+      createdAt:
+        initialPrompt?.createdAt ?? now,
+
       updatedAt: now,
-      isFavorite: false,
-      isPinned: false,
+
+      isFavorite:
+        initialPrompt?.isFavorite ?? false,
+
+      isPinned:
+        initialPrompt?.isPinned ?? false,
     };
 
-    onSubmit(newPrompt);
+    onSubmit(prompt);
   };
 
   return (
@@ -70,7 +113,9 @@ function PromptForm({
         <input
           type="text"
           value={title}
-          onChange={(event) => setTitle(event.target.value)}
+          onChange={(event) =>
+            setTitle(event.target.value)
+          }
           placeholder="e.g. Professional Resume Prompt"
           className="w-full rounded-lg border border-gray-300 px-4 py-2.5 outline-none focus:border-gray-900"
         />
@@ -84,7 +129,9 @@ function PromptForm({
 
         <textarea
           value={content}
-          onChange={(event) => setContent(event.target.value)}
+          onChange={(event) =>
+            setContent(event.target.value)
+          }
           placeholder="Write your AI prompt here..."
           rows={5}
           className="w-full resize-none rounded-lg border border-gray-300 px-4 py-2.5 outline-none focus:border-gray-900"
@@ -99,7 +146,9 @@ function PromptForm({
 
         <textarea
           value={description}
-          onChange={(event) => setDescription(event.target.value)}
+          onChange={(event) =>
+            setDescription(event.target.value)
+          }
           placeholder="What is this prompt used for?"
           rows={3}
           className="w-full resize-none rounded-lg border border-gray-300 px-4 py-2.5 outline-none focus:border-gray-900"
@@ -114,7 +163,9 @@ function PromptForm({
 
         <select
           value={category}
-          onChange={(event) => setCategory(event.target.value)}
+          onChange={(event) =>
+            setCategory(event.target.value)
+          }
           className="w-full rounded-lg border border-gray-300 bg-white px-4 py-2.5 outline-none focus:border-gray-900"
         >
           <option value="">
@@ -141,7 +192,9 @@ function PromptForm({
         <input
           type="text"
           value={tags}
-          onChange={(event) => setTags(event.target.value)}
+          onChange={(event) =>
+            setTags(event.target.value)
+          }
           placeholder="react, javascript, interview"
           className="w-full rounded-lg border border-gray-300 px-4 py-2.5 outline-none focus:border-gray-900"
         />
@@ -165,7 +218,9 @@ function PromptForm({
           type="submit"
           className="rounded-lg bg-gray-900 px-4 py-2.5 text-sm font-medium text-white hover:bg-gray-800"
         >
-          Save Prompt
+          {initialPrompt
+            ? "Save Changes"
+            : "Save Prompt"}
         </button>
       </div>
     </form>
