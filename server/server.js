@@ -26,13 +26,15 @@ app.use(
 app.use(express.json());
 
 
-  
+
 app.get("/", (req, res) => {
+//   console.log(req);
   res.json({
     success: true,
     message:
       "AI Prompt Library API is running",
   });
+//   console.log(res)
 });
 
 

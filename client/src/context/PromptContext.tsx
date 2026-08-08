@@ -7,221 +7,328 @@ import {
 
 import type { Prompt } from "../types/prompt";
 
+import {
+  getPrompts,
+  createPrompt,
+  updatePromptApi,
+  deletePromptApi,
+} from "../api/promptApi";
+
 interface PromptContextType {
   prompts: Prompt[];
 
-  addPrompt: (prompt: Prompt) => void;
+  loading: boolean;
 
-  updatePrompt: (updatedPrompt: Prompt) => void;
+  error: string | null;
 
-  deletePrompt: (id: string) => void;
+  addPrompt: (
+    prompt: Prompt
+  ) => Promise<void>;
 
-  duplicatePrompt: (prompt: Prompt) => void;
+  updatePrompt: (
+    prompt: Prompt
+  ) => Promise<void>;
 
-  toggleFavorite: (id: string) => void;
+  deletePrompt: (
+    id: string
+  ) => Promise<void>;
 
-  togglePin: (id: string) => void;
+  duplicatePrompt: (
+    prompt: Prompt
+  ) => Promise<void>;
+
+  toggleFavorite: (
+    id: string
+  ) => Promise<void>;
+
+  togglePin: (
+    id: string
+  ) => Promise<void>;
 }
 
 const PromptContext =
-  createContext<PromptContextType | null>(null);
+  createContext<PromptContextType | null>(
+    null
+  );
 
 interface PromptProviderProps {
   children: ReactNode;
 }
 
-const STORAGE_KEY = "ai-prompt-library";
-
-const initialPrompts: Prompt[] = [
-  {
-    id: "1",
-    title: "Professional Resume Prompt",
-    content:
-      "Create a professional resume for a software developer applying for internships.",
-    category: "Resume",
-    tags: ["job", "career", "resume"],
-    description:
-      "A prompt for creating professional software developer resumes.",
-    createdAt: "2026-08-08T10:30:00Z",
-    updatedAt: "2026-08-08T10:30:00Z",
-    isFavorite: true,
-    isPinned: true,
-  },
-
-  {
-    id: "2",
-    title: "Code Review Prompt",
-    content:
-      "Review the following code and explain the bugs, improvements, and possible edge cases.",
-    category: "Coding",
-    tags: ["code", "review", "programming"],
-    description:
-      "Useful for getting detailed feedback on programming code.",
-    createdAt: "2026-08-07T10:30:00Z",
-    updatedAt: "2026-08-07T10:30:00Z",
-    isFavorite: false,
-    isPinned: false,
-  },
-
-  {
-    id: "3",
-    title: "Professional Email Prompt",
-    content:
-      "Write a professional and polite email requesting an update regarding my job application.",
-    category: "Email",
-    tags: ["email", "job", "professional"],
-    description:
-      "Useful for writing professional job-related emails.",
-    createdAt: "2026-08-06T10:30:00Z",
-    updatedAt: "2026-08-06T10:30:00Z",
-    isFavorite: true,
-    isPinned: false,
-  },
-];
-
 export function PromptProvider({
   children,
 }: PromptProviderProps) {
-  // Load prompts from LocalStorage
-  const [prompts, setPrompts] = useState<Prompt[]>(() => {
-    try {
-      const savedPrompts =
-        localStorage.getItem(STORAGE_KEY);
+  const [prompts, setPrompts] =
+    useState<Prompt[]>([]);
 
-      if (savedPrompts) {
-        return JSON.parse(savedPrompts);
+  const [loading, setLoading] =
+    useState(true);
+
+  const [error, setError] =
+    useState<string | null>(null);
+
+  // ==============================
+  // LOAD PROMPTS FROM BACKEND
+  // ==============================
+
+  useEffect(() => {
+    const loadPrompts = async () => {
+      try {
+        setLoading(true);
+        setError(null);
+
+        const data =
+          await getPrompts();
+
+        setPrompts(data);
+      } catch (error) {
+        console.error(
+          "Failed to load prompts:",
+          error
+        );
+
+        setError(
+          "Failed to load prompts from server."
+        );
+      } finally {
+        setLoading(false);
       }
+    };
 
-      return initialPrompts;
+    loadPrompts();
+  }, []);
+
+  // ==============================
+  // ADD PROMPT
+  // ==============================
+
+  const addPrompt = async (
+    prompt: Prompt
+  ) => {
+    try {
+      setError(null);
+
+      const newPrompt =
+        await createPrompt({
+          title: prompt.title,
+          content: prompt.content,
+          category: prompt.category,
+          tags: prompt.tags,
+          description:
+            prompt.description,
+          isFavorite:
+            prompt.isFavorite,
+          isPinned:
+            prompt.isPinned,
+        });
+
+      setPrompts((current) => [
+        ...current,
+        newPrompt,
+      ]);
     } catch (error) {
       console.error(
-        "Failed to load prompts:",
+        "Failed to add prompt:",
         error
       );
 
-      return initialPrompts;
+      setError(
+        "Failed to add prompt."
+      );
+
+      throw error;
     }
-  });
-
-  // Save prompts whenever they change
-  useEffect(() => {
-    localStorage.setItem(
-      STORAGE_KEY,
-      JSON.stringify(prompts)
-    );
-  }, [prompts]);
-
-  // -------------------------
-  // ADD
-  // -------------------------
-
-  const addPrompt = (prompt: Prompt) => {
-    setPrompts((currentPrompts) => [
-      ...currentPrompts,
-      prompt,
-    ]);
   };
 
-  // -------------------------
-  // UPDATE
-  // -------------------------
+  // ==============================
+  // UPDATE PROMPT
+  // ==============================
 
-  const updatePrompt = (
-    updatedPrompt: Prompt
-  ) => {
-    setPrompts((currentPrompts) =>
-      currentPrompts.map((prompt) =>
-        prompt.id === updatedPrompt.id
-          ? updatedPrompt
-          : prompt
-      )
-    );
-  };
-
-  // -------------------------
-  // DELETE
-  // -------------------------
-
-  const deletePrompt = (id: string) => {
-    setPrompts((currentPrompts) =>
-      currentPrompts.filter(
-        (prompt) => prompt.id !== id
-      )
-    );
-  };
-
-  // -------------------------
-  // DUPLICATE
-  // -------------------------
-
-  const duplicatePrompt = (
+  const updatePrompt = async (
     prompt: Prompt
   ) => {
-    const now =
-      new Date().toISOString();
+    try {
+      setError(null);
 
-    const duplicatedPrompt: Prompt = {
+      const updatedPrompt =
+        await updatePromptApi(prompt);
+
+      setPrompts((current) =>
+        current.map((item) =>
+          item.id === updatedPrompt.id
+            ? updatedPrompt
+            : item
+        )
+      );
+    } catch (error) {
+      console.error(
+        "Failed to update prompt:",
+        error
+      );
+
+      setError(
+        "Failed to update prompt."
+      );
+
+      throw error;
+    }
+  };
+
+  // ==============================
+  // DELETE PROMPT
+  // ==============================
+
+  const deletePrompt = async (
+    id: string
+  ) => {
+    try {
+      setError(null);
+
+      await deletePromptApi(id);
+
+      setPrompts((current) =>
+        current.filter(
+          (prompt) =>
+            prompt.id !== id
+        )
+      );
+    } catch (error) {
+      console.error(
+        "Failed to delete prompt:",
+        error
+      );
+
+      setError(
+        "Failed to delete prompt."
+      );
+
+      throw error;
+    }
+  };
+
+  // ==============================
+  // DUPLICATE PROMPT
+  // ==============================
+
+  const duplicatePrompt = async (
+    prompt: Prompt
+  ) => {
+    try {
+      setError(null);
+
+      const duplicatedPrompt =
+        await createPrompt({
+          title: `${prompt.title} (Copy)`,
+
+          content:
+            prompt.content,
+
+          category:
+            prompt.category,
+
+          tags: [...prompt.tags],
+
+          description:
+            prompt.description,
+
+          isFavorite:
+            prompt.isFavorite,
+
+          isPinned:
+            prompt.isPinned,
+        });
+
+      setPrompts((current) => [
+        ...current,
+        duplicatedPrompt,
+      ]);
+    } catch (error) {
+      console.error(
+        "Failed to duplicate prompt:",
+        error
+      );
+
+      setError(
+        "Failed to duplicate prompt."
+      );
+
+      throw error;
+    }
+  };
+
+  // ==============================
+  // TOGGLE FAVORITE
+  // ==============================
+
+  const toggleFavorite = async (
+    id: string
+  ) => {
+    const prompt =
+      prompts.find(
+        (item) => item.id === id
+      );
+
+    if (!prompt) {
+      return;
+    }
+
+    await updatePrompt({
       ...prompt,
-      id: crypto.randomUUID(),
-      title: `${prompt.title} (Copy)`,
-      createdAt: now,
-      updatedAt: now,
-    };
 
-    setPrompts((currentPrompts) => [
-      ...currentPrompts,
-      duplicatedPrompt,
-    ]);
+      isFavorite:
+        !prompt.isFavorite,
+
+      updatedAt:
+        new Date().toISOString(),
+    });
   };
 
-  // -------------------------
-  // FAVORITE
-  // -------------------------
+  // ==============================
+  // TOGGLE PIN
+  // ==============================
 
-  const toggleFavorite = (id: string) => {
-    setPrompts((currentPrompts) =>
-      currentPrompts.map((prompt) =>
-        prompt.id === id
-          ? {
-              ...prompt,
-              isFavorite:
-                !prompt.isFavorite,
-              updatedAt:
-                new Date().toISOString(),
-            }
-          : prompt
-      )
-    );
-  };
+  const togglePin = async (
+    id: string
+  ) => {
+    const prompt =
+      prompts.find(
+        (item) => item.id === id
+      );
 
-  // -------------------------
-  // PIN
-  // -------------------------
+    if (!prompt) {
+      return;
+    }
 
-  const togglePin = (id: string) => {
-    setPrompts((currentPrompts) =>
-      currentPrompts.map((prompt) =>
-        prompt.id === id
-          ? {
-              ...prompt,
-              isPinned: !prompt.isPinned,
-              updatedAt:
-                new Date().toISOString(),
-            }
-          : prompt
-      )
-    );
+    await updatePrompt({
+      ...prompt,
+
+      isPinned:
+        !prompt.isPinned,
+
+      updatedAt:
+        new Date().toISOString(),
+    });
   };
 
   return (
     <PromptContext.Provider
       value={{
         prompts,
+
+        loading,
+
+        error,
+
         addPrompt,
+
         updatePrompt,
+
         deletePrompt,
+
         duplicatePrompt,
+
         toggleFavorite,
+
         togglePin,
       }}
     >
@@ -231,17 +338,3 @@ export function PromptProvider({
 }
 
 export default PromptContext;
-
-
-
-// Browser
-//    ↓
-// LocalStorage
-//    ↓
-// "ai-prompt-library"
-//    ↓
-// JSON data
-//    ↓
-// prompts state
-//    ↓
-// Dashboard

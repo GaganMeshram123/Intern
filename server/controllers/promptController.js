@@ -150,6 +150,7 @@ export const updatePrompt = async (
         "Prompt updated successfully",
       data: prompt,
     });
+    
   } catch (error) {
     next(error);
   }
