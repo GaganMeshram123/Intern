@@ -2,11 +2,8 @@ import axios from "axios";
 
 import type { Prompt } from "../types/prompt";
 
-const API_URL = "http://intern-production-8a69.up.railway.app/api/prompts";
-
-// intern-production-8a69.up.railway.app
-
-// http://localhost:5000/api/prompts
+// const API_URL = "http://localhost:5000/api/prompts";
+const API_URL = "https://intern-production-8a69.up.railway.app/api/prompts";
 // ==============================
 // GET ALL PROMPTS
 // ==============================
