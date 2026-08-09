@@ -519,8 +519,8 @@ const searchInputRef =
           onCancel={() =>
             setIsAddModalOpen(false)
           }
-          onSubmit={(newPrompt) => {
-            addPrompt(newPrompt);
+          onSubmit={async (newPrompt) => {
+            await addPrompt(newPrompt);
 
             setIsAddModalOpen(false);
           }}
@@ -544,8 +544,8 @@ const searchInputRef =
             onCancel={() =>
               setEditingPrompt(null)
             }
-            onSubmit={(updatedPrompt) => {
-              updatePrompt(
+            onSubmit={async (updatedPrompt) => {
+              await updatePrompt(
                 updatedPrompt
               );
 

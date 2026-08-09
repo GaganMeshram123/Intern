@@ -8,7 +8,7 @@ import { CATEGORIES } from "../../constants/categories";
 import type { Prompt } from "../../types/prompt";
 
 interface PromptFormProps {
-  onSubmit: (prompt: Prompt) => void;
+  onSubmit: (prompt: Prompt) => void | Promise<void>;
   onCancel: () => void;
   initialPrompt?: Prompt;
 }
