@@ -206,3 +206,11 @@ The main Context is:
 
 ```text
 client/src/context/PromptContext.tsx
+
+<img width="1919" height="922" alt="image" src="https://github.com/user-attachments/assets/fcc55d45-129d-432e-aa2e-9ef7b99c6239" />
+<img width="1919" height="914" alt="image" src="https://github.com/user-attachments/assets/284a6ec2-530a-4176-8614-9d0f1e32b82f" />
+<img width="1919" height="918" alt="image" src="https://github.com/user-attachments/assets/890e9b88-09d0-40b3-9a44-cc9f16caa8b9" />
+<img width="1919" height="947" alt="image" src="https://github.com/user-attachments/assets/1c0dbfa7-d040-445a-866d-cf31faece2b1" />
+
+
+
