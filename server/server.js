@@ -70,3 +70,17 @@ await connectDB();
 };
 
 startServer();
+
+// {
+//   "title": "Node.js Interview Prompt",
+//   "content": "Explain Node.js event loop with examples.",
+//   "category": "Coding",
+//   "tags": [
+//     "nodejs",
+//     "javascript",
+//     "interview"
+//   ],
+//   "description": "Useful for Node.js interview preparation.",
+//   "isFavorite": false,
+//   "isPinned": false
+// }

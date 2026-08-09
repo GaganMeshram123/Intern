@@ -15,6 +15,7 @@ export const getPrompts = async (
     const prompts = await Prompt.find()
       .sort({ createdAt: -1 });
 
+    //showing the newest form first 
     res.status(200).json({
       success: true,
       data: prompts,
