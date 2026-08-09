@@ -202,10 +202,7 @@ The selected theme is persisted so that it remains after refreshing the page.
 
 The application uses React Context API for shared prompt state management.
 
-The main Context is:
-
-```text
-client/src/context/PromptContext.tsx
+The main Context is: client/src/context/PromptContext.tsx
 
 <img width="1919" height="922" alt="image" src="https://github.com/user-attachments/assets/fcc55d45-129d-432e-aa2e-9ef7b99c6239" />
 <img width="1919" height="914" alt="image" src="https://github.com/user-attachments/assets/284a6ec2-530a-4176-8614-9d0f1e32b82f" />
